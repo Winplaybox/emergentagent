@@ -220,7 +220,7 @@ async def generate_bio(request: GenerateBioRequest):
         
         limit = platform_limits.get(request.platform.lower(), 150)
         
-        model = create_gemini_model(
+        system_instruction = (
             f"You are a social media strategist specializing in profile optimization for {request.platform}. "
             f"Create bios that are memorable, clear, and optimized for discoverability. "
             f"CRITICAL: You MUST keep the bio under {limit} characters. This is a hard limit that cannot be exceeded."
@@ -234,7 +234,10 @@ async def generate_bio(request: GenerateBioRequest):
             f"Count characters carefully and ensure you stay under {limit} characters total."
         )
         
-        response = model.generate_content(prompt)
+        response = gemini_client.models.generate_content(
+            model='gemini-2.0-flash-exp',
+            contents=system_instruction + "\n\n" + prompt
+        )
         bio = response.text.strip()
         
         return GeneratedResponse(
