@@ -256,7 +256,7 @@ async def generate_bio(request: GenerateBioRequest):
 @api_router.post("/generate-comment", response_model=GeneratedResponse)
 async def generate_comment(request: GenerateCommentRequest):
     try:
-        model = create_gemini_model(
+        system_instruction = (
             "You are an engagement expert. Generate authentic, thoughtful comments that spark conversations. "
             "Avoid generic responses. Be genuine, specific, and add value."
         )
@@ -267,7 +267,10 @@ async def generate_comment(request: GenerateCommentRequest):
             f"Keep each comment under 150 characters."
         )
         
-        response = model.generate_content(prompt)
+        response = gemini_client.models.generate_content(
+            model='gemini-2.0-flash-exp',
+            contents=system_instruction + "\n\n" + prompt
+        )
         comments = response.text.strip()
         
         return GeneratedResponse(
