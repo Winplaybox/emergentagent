@@ -221,9 +221,9 @@ async def generate_bio(request: GenerateBioRequest):
             f"Create bios that are memorable, clear, and optimized for discoverability."
         )
         
-        prompt = f"Create an optimized {request.platform} bio based on: {request.details}. "
-                f"Make it catchy, clear, and memorable. Use emojis strategically. "
-                f"Keep under {limit} characters. Include a call-to-action if appropriate."
+        prompt = (f"Create an optimized {request.platform} bio based on: {request.details}. "
+                 f"Make it catchy, clear, and memorable. Use emojis strategically. "
+                 f"Keep under {limit} characters. Include a call-to-action if appropriate.")
         
         response = await chat.send_message(UserMessage(text=prompt))
         bio = response.strip()
