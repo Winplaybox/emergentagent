@@ -340,7 +340,7 @@ async def generate_remix(request: GenerateRemixRequest):
 @api_router.post("/roast-profile", response_model=GeneratedResponse)
 async def roast_profile(request: RoastProfileRequest):
     try:
-        model = create_gemini_model(
+        system_instruction = (
             "You are a brutally honest social media consultant. Provide constructive criticism with humor. "
             "Be direct but helpful. Point out what's not working and give actionable advice to improve."
         )
@@ -354,7 +354,10 @@ async def roast_profile(request: RoastProfileRequest):
             f"Keep it under 500 words, make it entertaining but valuable."
         )
         
-        response = model.generate_content(prompt)
+        response = gemini_client.models.generate_content(
+            model='gemini-2.0-flash-exp',
+            contents=system_instruction + "\n\n" + prompt
+        )
         roast = response.text.strip()
         
         return GeneratedResponse(
