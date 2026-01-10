@@ -1,0 +1,169 @@
+{
+  "identity": {
+    "persona": "E1",
+    "philosophy": "Fusion over Imitation. Emotion First. Content is King.",
+    "anti_patterns": [
+      "Purple/Teal generic gradients",
+      "Inter font everywhere",
+      "Centered everything",
+      "Gradient overload (>20%)"
+    ]
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Outfit, sans-serif",
+      "weights": ["600", "700", "800"],
+      "usage": "Use for all H1-H3. Tight tracking (-0.02em).",
+      "google_font_url": "https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap"
+    },
+    "body": {
+      "font_family": "Manrope, sans-serif",
+      "weights": ["400", "500"],
+      "usage": "Use for paragraphs, inputs, and UI text."
+    },
+    "mono": {
+      "font_family": "JetBrains Mono, monospace",
+      "usage": "Use for hashtags, code snippets, and data values."
+    }
+  },
+  "colors": {
+    "theme": "dark",
+    "palette": {
+      "background": {
+        "default": "#050505",
+        "paper": "#0A0A0A",
+        "subtle": "#121212"
+      },
+      "primary": {
+        "main": "#CCFF00",
+        "hover": "#B3E600",
+        "foreground": "#000000",
+        "description": "Acid Lime - Use for primary CTAs and key accents only."
+      },
+      "secondary": {
+        "main": "#7000FF",
+        "foreground": "#FFFFFF",
+        "description": "Electric Violet - Use for secondary actions and depth."
+      },
+      "accent": {
+        "cyan": "#00F0FF",
+        "pink": "#FF0099"
+      },
+      "text": {
+        "primary": "#FFFFFF",
+        "secondary": "#A1A1AA",
+        "muted": "#52525B"
+      },
+      "border": {
+        "default": "#27272A",
+        "active": "#CCFF00"
+      }
+    },
+    "gradients": {
+      "glow": "radial-gradient(circle at center, rgba(204, 255, 0, 0.15) 0%, transparent 70%)",
+      "surface": "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%)"
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": {
+      "default": "backdrop-blur-xl bg-black/40 border border-white/10",
+      "heavy": "backdrop-blur-2xl bg-black/60 border border-white/5"
+    },
+    "borders": {
+      "neon_trace": "Use a moving gradient border for high-value cards.",
+      "subtle": "1px solid #27272A"
+    },
+    "shadows": {
+      "neon": "0 0 20px rgba(204, 255, 0, 0.2)",
+      "card": "0 4px 24px -12px rgba(0, 0, 0, 0.5)"
+    },
+    "texture": "Add a subtle noise overlay (opacity 0.03) to the main background to kill digital flatness."
+  },
+  "layout_strategy": {
+    "spacing": {
+      "base": "Use 2-3x more spacing than typical. p-8, p-12.",
+      "container_padding": "p-6 or p-8 for bordered containers."
+    },
+    "grid_system": {
+      "marketing": "Mode A: Tetris Grid. Asymmetric cols-12. Mix Hero (col-span-8), Square (col-span-4), Tall (row-span-2).",
+      "dashboard": "Mode B: Control Room. Dense grid-cols-4. Gap-4. Every pixel utilized."
+    },
+    "alignment": {
+      "general": "Left align text. Center only for specific hero moments.",
+      "mobile": "Stack vertically. Max image height 80vh."
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#CCFF00] text-black hover:bg-[#B3E600] rounded-full font-bold px-8 py-6 transition-transform hover:scale-105 active:scale-95",
+      "secondary": "bg-white/5 text-white border border-white/10 hover:bg-white/10 rounded-full px-6 py-6"
+    },
+    "cards": {
+      "style": "bg-[#0A0A0A] border border-white/10 rounded-2xl overflow-hidden relative group",
+      "hover": "hover:border-[#CCFF00]/50 transition-colors duration-300"
+    },
+    "inputs": {
+      "style": "bg-black/50 border-white/10 focus:border-[#CCFF00] focus:ring-1 focus:ring-[#CCFF00] rounded-xl h-12"
+    },
+    "navigation": {
+      "sidebar": "Fixed left, glassmorphism, collapsed on mobile.",
+      "mobile_nav": "Bottom sheet or hamburger menu."
+    }
+  },
+  "image_urls": {
+    "hero": [
+      {
+        "url": "https://images.unsplash.com/photo-1762535120786-76238d9eeb0d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwzfHxpbmZsdWVuY2VyJTIwcmVjb3JkaW5nJTIwdmlkZW8lMjBwaG9uZXxlbnwwfHx8fDE3NjgwNTgxNzB8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Young woman holding smartphone on gimbal - Hero Image",
+        "category": "hero"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1758874384113-4059f76860c5?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHw0fHxpbmZsdWVuY2VyJTIwcmVjb3JkaW5nJTIwdmlkZW8lMjBwaG9uZXxlbnwwfHx8fDE3NjgwNTgxNzB8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Male blogger recording video - Alternate Hero",
+        "category": "hero"
+      }
+    ],
+    "backgrounds": [
+      {
+        "url": "https://images.unsplash.com/photo-1762279388952-85187155e48d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwzfHxuZW9uJTIwYWJzdHJhY3QlMjBkaWdpdGFsJTIwYXJ0fGVufDB8fHx8MTc2ODA1ODE3MXww&ixlib=rb-4.1.0&q=85",
+        "description": "Abstract neon lines digital landscape - Section Background",
+        "category": "background"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1731335068367-02c0a2f4581c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwxfHxuZW9uJTIwYWJzdHJhY3QlMjBkaWdpdGFsJTIwYXJ0fGVufDB8fHx8MTc2ODA1ODE3MXww&ixlib=rb-4.1.0&q=85",
+        "description": "Multicolored neon abstract - Feature Card Background",
+        "category": "background"
+      }
+    ],
+    "placeholders": [
+      {
+        "url": "https://images.pexels.com/photos/6266975/pexels-photo-6266975.jpeg",
+        "description": "Generic social media vibe",
+        "category": "general"
+      }
+    ]
+  },
+  "motion": {
+    "libraries": ["framer-motion"],
+    "guidelines": [
+      "Use 'spring' physics for natural feel.",
+      "Stagger children animations for lists.",
+      "Micro-interactions on all hover states.",
+      "NO 'transition: all'. Animate specific properties."
+    ]
+  },
+  "accessibility": {
+    "contrast": "Ensure 4.5:1 for normal text. Use APCA standards.",
+    "focus": "Visible focus rings (color: #CCFF00) for keyboard navigation.",
+    "reduced_motion": "Respect prefers-reduced-motion media query."
+  },
+  "universal_guidelines": [
+    "Do not use generic centered layouts.",
+    "Create depth through layered design elements (z-index).",
+    "Use glassmorphism with backdrop filters.",
+    "NEVER use AI assistant emojis (🤖, 🧠) as icons.",
+    "Use 'sonner' for toasts.",
+    "All interactive elements MUST have data-testid attributes."
+  ],
+  "instructions_to_main_agent": "You are building a high-energy, dark-mode social media tool. Use the 'Acid Lime' (#CCFF00) as your primary action color to cut through the dark UI. Implement the 'Bento Grid' layout for the dashboard. Use Shadcn components but override their styles to match the 'Cyber-Acid' aesthetic defined in colors.palette. Ensure the app feels fast and 'viral'."
+}
