@@ -185,9 +185,9 @@ async def generate_caption(request: GenerateCaptionRequest):
             f"Keep captions under {limit} characters. Use {request.tone} tone."
         )
         
-        prompt = f"Create a compelling {request.platform} caption for: {request.content_description}. "
-                f"Make it {request.tone}, add emojis naturally, include 3-5 relevant hashtags at the end. "
-                f"Keep under {limit} characters total."
+        prompt = (f"Create a compelling {request.platform} caption for: {request.content_description}. "
+                  f"Make it {request.tone}, add emojis naturally, include 3-5 relevant hashtags at the end. "
+                  f"Keep under {limit} characters total.")
         
         response = await chat.send_message(UserMessage(text=prompt))
         caption = response.strip()
