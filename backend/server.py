@@ -13,19 +13,19 @@ from datetime import datetime, timezone
 import base64
 from io import BytesIO
 from PIL import Image
-import asyncio
-from emergentintegrations.llm.chat import LlmChat, UserMessage, FileContentWithMimeType, ImageContent
+import google.generativeai as genai
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
-mongo_url = os.environ['MONGO_URL']
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/')
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[os.environ.get('DB_NAME', 'hashtaghero')]
 
-# Gemini API Key
-EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
+# Configure Gemini API
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Create the main app
 app = FastAPI()
@@ -69,19 +69,16 @@ class RemixResponse(BaseModel):
     tiktok: str
     youtube: str
 
-# Helper function to create Gemini chat instance
-def create_gemini_chat(system_message: str) -> LlmChat:
-    session_id = f"session_{uuid.uuid4()}"
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=session_id,
-        system_message=system_message
+# Helper function to create Gemini model
+def create_gemini_model(system_instruction: str):
+    model = genai.GenerativeModel(
+        model_name='gemini-2.0-flash-exp',
+        system_instruction=system_instruction
     )
-    chat.with_model("gemini", "gemini-3-flash-preview")
-    return chat
+    return model
 
-# Helper function to convert image to base64
-async def image_to_base64(file: UploadFile) -> tuple[str, str]:
+# Helper function to convert image to PIL Image
+async def process_uploaded_image(file: UploadFile) -> Image.Image:
     contents = await file.read()
     image = Image.open(BytesIO(contents))
     
@@ -96,12 +93,7 @@ async def image_to_base64(file: UploadFile) -> tuple[str, str]:
         new_size = tuple(int(dim * ratio) for dim in image.size)
         image = image.resize(new_size, Image.Resampling.LANCZOS)
     
-    # Convert to base64
-    buffered = BytesIO()
-    image.save(buffered, format="JPEG", quality=85)
-    img_str = base64.b64encode(buffered.getvalue()).decode()
-    
-    return img_str, "image/jpeg"
+    return image
 
 # Routes
 @api_router.get("/")
@@ -128,31 +120,24 @@ async def get_status_checks():
 @api_router.post("/generate-hashtags-from-image")
 async def generate_hashtags_from_image(file: UploadFile = File(...)):
     try:
-        # Convert image to base64
-        img_base64, mime_type = await image_to_base64(file)
+        # Process image
+        image = await process_uploaded_image(file)
         
-        # Create Gemini chat with vision
-        chat = create_gemini_chat(
+        # Create Gemini model with vision
+        model = create_gemini_model(
             "You are a viral social media expert specializing in Instagram, TikTok, and YouTube Shorts. "
             "Analyze images and generate trending, SEO-optimized hashtags that maximize reach and engagement."
         )
         
-        # Create image content
-        image_content = ImageContent(image_base64=img_base64)
-        
-        # Create message with image
-        user_message = UserMessage(
-            text="Analyze this image and generate 30 trending, viral hashtags optimized for Instagram, TikTok, and YouTube Shorts. "
-                 "Mix popular hashtags (100k-1M posts) with niche-specific tags. Format: #hashtag1 #hashtag2 (no commas, just spaces). "
-                 "Focus on the main subject, mood, colors, and aesthetic. Make them SEO-optimized and trendy.",
-            file_contents=[image_content]
+        prompt = (
+            "Analyze this image and generate 30 trending, viral hashtags optimized for Instagram, TikTok, and YouTube Shorts. "
+            "Mix popular hashtags (100k-1M posts) with niche-specific tags. Format: #hashtag1 #hashtag2 (no commas, just spaces). "
+            "Focus on the main subject, mood, colors, and aesthetic. Make them SEO-optimized and trendy."
         )
         
-        # Get response from Gemini
-        response = await chat.send_message(user_message)
-        
-        # Clean up response
-        hashtags = response.strip()
+        # Generate response
+        response = model.generate_content([prompt, image])
+        hashtags = response.text.strip()
         char_count = len(hashtags)
         
         return {
@@ -180,17 +165,19 @@ async def generate_caption(request: GenerateCaptionRequest):
         
         limit = platform_limits.get(request.platform.lower(), 2200)
         
-        chat = create_gemini_chat(
+        model = create_gemini_model(
             f"You are a viral content creator for {request.platform}. Create engaging, authentic captions that drive engagement. "
             f"Keep captions under {limit} characters. Use {request.tone} tone."
         )
         
-        prompt = (f"Create a compelling {request.platform} caption for: {request.content_description}. "
-                  f"Make it {request.tone}, add emojis naturally, include 3-5 relevant hashtags at the end. "
-                  f"Keep under {limit} characters total.")
+        prompt = (
+            f"Create a compelling {request.platform} caption for: {request.content_description}. "
+            f"Make it {request.tone}, add emojis naturally, include 3-5 relevant hashtags at the end. "
+            f"Keep under {limit} characters total."
+        )
         
-        response = await chat.send_message(UserMessage(text=prompt))
-        caption = response.strip()
+        response = model.generate_content(prompt)
+        caption = response.text.strip()
         
         return GeneratedResponse(
             result=caption,
@@ -216,20 +203,22 @@ async def generate_bio(request: GenerateBioRequest):
         
         limit = platform_limits.get(request.platform.lower(), 150)
         
-        chat = create_gemini_chat(
+        model = create_gemini_model(
             f"You are a social media strategist specializing in profile optimization for {request.platform}. "
             f"Create bios that are memorable, clear, and optimized for discoverability. "
             f"CRITICAL: You MUST keep the bio under {limit} characters. This is a hard limit that cannot be exceeded."
         )
         
-        prompt = (f"Create an optimized {request.platform} bio based on: {request.details}. "
-                 f"IMPORTANT: The bio MUST be under {limit} characters (current limit for {request.platform}). "
-                 f"Make it catchy, clear, and memorable. Use emojis strategically. "
-                 f"Include a call-to-action if appropriate. "
-                 f"Count characters carefully and ensure you stay under {limit} characters total.")
+        prompt = (
+            f"Create an optimized {request.platform} bio based on: {request.details}. "
+            f"IMPORTANT: The bio MUST be under {limit} characters (current limit for {request.platform}). "
+            f"Make it catchy, clear, and memorable. Use emojis strategically. "
+            f"Include a call-to-action if appropriate. "
+            f"Count characters carefully and ensure you stay under {limit} characters total."
+        )
         
-        response = await chat.send_message(UserMessage(text=prompt))
-        bio = response.strip()
+        response = model.generate_content(prompt)
+        bio = response.text.strip()
         
         return GeneratedResponse(
             result=bio,
@@ -247,17 +236,19 @@ async def generate_bio(request: GenerateBioRequest):
 @api_router.post("/generate-comment", response_model=GeneratedResponse)
 async def generate_comment(request: GenerateCommentRequest):
     try:
-        chat = create_gemini_chat(
+        model = create_gemini_model(
             "You are an engagement expert. Generate authentic, thoughtful comments that spark conversations. "
             "Avoid generic responses. Be genuine, specific, and add value."
         )
         
-        prompt = (f"Generate 3 different engaging comment suggestions for this context: {request.context}. "
-                 f"Make them authentic, specific, and conversational. Separate each with '---'. "
-                 f"Keep each comment under 150 characters.")
+        prompt = (
+            f"Generate 3 different engaging comment suggestions for this context: {request.context}. "
+            f"Make them authentic, specific, and conversational. Separate each with '---'. "
+            f"Keep each comment under 150 characters."
+        )
         
-        response = await chat.send_message(UserMessage(text=prompt))
-        comments = response.strip()
+        response = model.generate_content(prompt)
+        comments = response.text.strip()
         
         return GeneratedResponse(
             result=comments,
@@ -275,23 +266,26 @@ async def generate_comment(request: GenerateCommentRequest):
 @api_router.post("/generate-remix", response_model=RemixResponse)
 async def generate_remix(request: GenerateRemixRequest):
     try:
-        chat = create_gemini_chat(
+        model = create_gemini_model(
             "You are a cross-platform content strategist. Adapt content for Instagram, TikTok, and YouTube Shorts "
             "by optimizing for each platform's unique audience, format, and algorithm."
         )
         
-        prompt = (f"Adapt this content for Instagram, TikTok, and YouTube Shorts: '{request.post_content}'. "
-                 f"For each platform, create an optimized version considering: "
-                 f"Instagram (aesthetic, community, 2200 char limit), "
-                 f"TikTok (trendy, authentic, 2200 char limit), "
-                 f"YouTube (searchable, engaging, 5000 char limit). "
-                 f"Format your response EXACTLY as: "
-                 f"INSTAGRAM: [content]\n\nTIKTOK: [content]\n\nYOUTUBE: [content]")
+        prompt = (
+            f"Adapt this content for Instagram, TikTok, and YouTube Shorts: '{request.post_content}'. "
+            f"For each platform, create an optimized version considering: "
+            f"Instagram (aesthetic, community, 2200 char limit), "
+            f"TikTok (trendy, authentic, 2200 char limit), "
+            f"YouTube (searchable, engaging, 5000 char limit). "
+            f"Format your response EXACTLY as: "
+            f"INSTAGRAM: [content]\n\nTIKTOK: [content]\n\nYOUTUBE: [content]"
+        )
         
-        response = await chat.send_message(UserMessage(text=prompt))
+        response = model.generate_content(prompt)
+        text = response.text
         
         # Parse response
-        parts = response.split('\n\n')
+        parts = text.split('\n\n')
         instagram_content = ""
         tiktok_content = ""
         youtube_content = ""
@@ -320,20 +314,22 @@ async def generate_remix(request: GenerateRemixRequest):
 @api_router.post("/roast-profile", response_model=GeneratedResponse)
 async def roast_profile(request: RoastProfileRequest):
     try:
-        chat = create_gemini_chat(
+        model = create_gemini_model(
             "You are a brutally honest social media consultant. Provide constructive criticism with humor. "
             "Be direct but helpful. Point out what's not working and give actionable advice to improve."
         )
         
-        prompt = (f"Roast/audit this social media profile: {request.profile_details}. "
-                 f"Be honest and funny but constructive. Point out: "
-                 f"1) What's not working (bio, content strategy, engagement tactics) "
-                 f"2) Specific improvements they should make "
-                 f"3) What they're doing right (if anything). "
-                 f"Keep it under 500 words, make it entertaining but valuable.")
+        prompt = (
+            f"Roast/audit this social media profile: {request.profile_details}. "
+            f"Be honest and funny but constructive. Point out: "
+            f"1) What's not working (bio, content strategy, engagement tactics) "
+            f"2) Specific improvements they should make "
+            f"3) What they're doing right (if anything). "
+            f"Keep it under 500 words, make it entertaining but valuable."
+        )
         
-        response = await chat.send_message(UserMessage(text=prompt))
-        roast = response.strip()
+        response = model.generate_content(prompt)
+        roast = response.text.strip()
         
         return GeneratedResponse(
             result=roast,
