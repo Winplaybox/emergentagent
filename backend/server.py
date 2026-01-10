@@ -249,9 +249,9 @@ async def generate_comment(request: GenerateCommentRequest):
             "Avoid generic responses. Be genuine, specific, and add value."
         )
         
-        prompt = f"Generate 3 different engaging comment suggestions for this context: {request.context}. "
-                f"Make them authentic, specific, and conversational. Separate each with '---'. "
-                f"Keep each comment under 150 characters."
+        prompt = (f"Generate 3 different engaging comment suggestions for this context: {request.context}. "
+                 f"Make them authentic, specific, and conversational. Separate each with '---'. "
+                 f"Keep each comment under 150 characters.")
         
         response = await chat.send_message(UserMessage(text=prompt))
         comments = response.strip()
