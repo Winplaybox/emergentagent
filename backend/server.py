@@ -179,7 +179,7 @@ async def generate_caption(request: GenerateCaptionRequest):
         
         limit = platform_limits.get(request.platform.lower(), 2200)
         
-        model = create_gemini_model(
+        system_instruction = (
             f"You are a viral content creator for {request.platform}. Create engaging, authentic captions that drive engagement. "
             f"Keep captions under {limit} characters. Use {request.tone} tone."
         )
@@ -190,7 +190,10 @@ async def generate_caption(request: GenerateCaptionRequest):
             f"Keep under {limit} characters total."
         )
         
-        response = model.generate_content(prompt)
+        response = gemini_client.models.generate_content(
+            model='gemini-2.0-flash-exp',
+            contents=system_instruction + "\n\n" + prompt
+        )
         caption = response.text.strip()
         
         return GeneratedResponse(
