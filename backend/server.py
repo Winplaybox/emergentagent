@@ -218,12 +218,15 @@ async def generate_bio(request: GenerateBioRequest):
         
         chat = create_gemini_chat(
             f"You are a social media strategist specializing in profile optimization for {request.platform}. "
-            f"Create bios that are memorable, clear, and optimized for discoverability."
+            f"Create bios that are memorable, clear, and optimized for discoverability. "
+            f"CRITICAL: You MUST keep the bio under {limit} characters. This is a hard limit that cannot be exceeded."
         )
         
         prompt = (f"Create an optimized {request.platform} bio based on: {request.details}. "
+                 f"IMPORTANT: The bio MUST be under {limit} characters (current limit for {request.platform}). "
                  f"Make it catchy, clear, and memorable. Use emojis strategically. "
-                 f"Keep under {limit} characters. Include a call-to-action if appropriate.")
+                 f"Include a call-to-action if appropriate. "
+                 f"Count characters carefully and ensure you stay under {limit} characters total.")
         
         response = await chat.send_message(UserMessage(text=prompt))
         bio = response.strip()
