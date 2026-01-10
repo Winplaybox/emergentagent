@@ -13,7 +13,8 @@ from datetime import datetime, timezone
 import base64
 from io import BytesIO
 from PIL import Image
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -25,7 +26,7 @@ db = client[os.environ.get('DB_NAME', 'hashtaghero')]
 
 # Configure Gemini API
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
-genai.configure(api_key=GEMINI_API_KEY)
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Create the main app
 app = FastAPI()
