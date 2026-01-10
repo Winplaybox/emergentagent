@@ -139,7 +139,7 @@ async def generate_hashtags_from_image(file: UploadFile = File(...)):
         
         # Generate response using new API
         response = gemini_client.models.generate_content(
-            model='gemini-1.5-flash',
+            model='gemini-2.0-flash',
             contents=[
                 types.Content(
                     role="user",
@@ -191,7 +191,7 @@ async def generate_caption(request: GenerateCaptionRequest):
         )
         
         response = gemini_client.models.generate_content(
-            model='gemini-1.5-flash',
+            model='gemini-2.0-flash',
             contents=system_instruction + "\n\n" + prompt
         )
         caption = response.text.strip()
@@ -235,7 +235,7 @@ async def generate_bio(request: GenerateBioRequest):
         )
         
         response = gemini_client.models.generate_content(
-            model='gemini-1.5-flash',
+            model='gemini-2.0-flash',
             contents=system_instruction + "\n\n" + prompt
         )
         bio = response.text.strip()
@@ -268,7 +268,7 @@ async def generate_comment(request: GenerateCommentRequest):
         )
         
         response = gemini_client.models.generate_content(
-            model='gemini-1.5-flash',
+            model='gemini-2.0-flash',
             contents=system_instruction + "\n\n" + prompt
         )
         comments = response.text.strip()
@@ -305,7 +305,7 @@ async def generate_remix(request: GenerateRemixRequest):
         )
         
         response = gemini_client.models.generate_content(
-            model='gemini-1.5-flash',
+            model='gemini-2.0-flash',
             contents=system_instruction + "\n\n" + prompt
         )
         text = response.text
@@ -355,7 +355,7 @@ async def roast_profile(request: RoastProfileRequest):
         )
         
         response = gemini_client.models.generate_content(
-            model='gemini-1.5-flash',
+            model='gemini-2.0-flash',
             contents=system_instruction + "\n\n" + prompt
         )
         roast = response.text.strip()
