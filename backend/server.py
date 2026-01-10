@@ -120,8 +120,13 @@ async def generate_hashtags_from_image(file: UploadFile = File(...)):
         # Process image
         image = await process_uploaded_image(file)
         
-        # Create Gemini model with vision
-        model = create_gemini_model(
+        # Convert image to base64 for Gemini
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        img_base64 = base64.b64encode(buffered.getvalue()).decode()
+        
+        # Create system instruction
+        system_instruction = (
             "You are a viral social media expert specializing in Instagram, TikTok, and YouTube Shorts. "
             "Analyze images and generate trending, SEO-optimized hashtags that maximize reach and engagement."
         )
@@ -132,8 +137,20 @@ async def generate_hashtags_from_image(file: UploadFile = File(...)):
             "Focus on the main subject, mood, colors, and aesthetic. Make them SEO-optimized and trendy."
         )
         
-        # Generate response
-        response = model.generate_content([prompt, image])
+        # Generate response using new API
+        response = gemini_client.models.generate_content(
+            model='gemini-2.0-flash-exp',
+            contents=[
+                types.Content(
+                    role="user",
+                    parts=[
+                        types.Part(text=system_instruction + "\n\n" + prompt),
+                        types.Part(inline_data=types.Blob(mime_type="image/jpeg", data=img_base64))
+                    ]
+                )
+            ]
+        )
+        
         hashtags = response.text.strip()
         char_count = len(hashtags)
         
