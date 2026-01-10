@@ -289,7 +289,7 @@ async def generate_comment(request: GenerateCommentRequest):
 @api_router.post("/generate-remix", response_model=RemixResponse)
 async def generate_remix(request: GenerateRemixRequest):
     try:
-        model = create_gemini_model(
+        system_instruction = (
             "You are a cross-platform content strategist. Adapt content for Instagram, TikTok, and YouTube Shorts "
             "by optimizing for each platform's unique audience, format, and algorithm."
         )
@@ -304,7 +304,10 @@ async def generate_remix(request: GenerateRemixRequest):
             f"INSTAGRAM: [content]\n\nTIKTOK: [content]\n\nYOUTUBE: [content]"
         )
         
-        response = model.generate_content(prompt)
+        response = gemini_client.models.generate_content(
+            model='gemini-2.0-flash-exp',
+            contents=system_instruction + "\n\n" + prompt
+        )
         text = response.text
         
         # Parse response
