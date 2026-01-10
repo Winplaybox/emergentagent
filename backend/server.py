@@ -72,11 +72,7 @@ class RemixResponse(BaseModel):
 
 # Helper function to create Gemini model
 def create_gemini_model(system_instruction: str):
-    model = genai.GenerativeModel(
-        model_name='gemini-2.0-flash-exp',
-        system_instruction=system_instruction
-    )
-    return model
+    return system_instruction  # Return system instruction for use in prompts
 
 # Helper function to convert image to PIL Image
 async def process_uploaded_image(file: UploadFile) -> Image.Image:
