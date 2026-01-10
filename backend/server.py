@@ -277,13 +277,13 @@ async def generate_remix(request: GenerateRemixRequest):
             "by optimizing for each platform's unique audience, format, and algorithm."
         )
         
-        prompt = f"Adapt this content for Instagram, TikTok, and YouTube Shorts: '{request.post_content}'. "
-                f"For each platform, create an optimized version considering: "
-                f"Instagram (aesthetic, community, 2200 char limit), "
-                f"TikTok (trendy, authentic, 2200 char limit), "
-                f"YouTube (searchable, engaging, 5000 char limit). "
-                f"Format your response EXACTLY as: "
-                f"INSTAGRAM: [content]\n\nTIKTOK: [content]\n\nYOUTUBE: [content]"
+        prompt = (f"Adapt this content for Instagram, TikTok, and YouTube Shorts: '{request.post_content}'. "
+                 f"For each platform, create an optimized version considering: "
+                 f"Instagram (aesthetic, community, 2200 char limit), "
+                 f"TikTok (trendy, authentic, 2200 char limit), "
+                 f"YouTube (searchable, engaging, 5000 char limit). "
+                 f"Format your response EXACTLY as: "
+                 f"INSTAGRAM: [content]\n\nTIKTOK: [content]\n\nYOUTUBE: [content]")
         
         response = await chat.send_message(UserMessage(text=prompt))
         
