@@ -322,12 +322,12 @@ async def roast_profile(request: RoastProfileRequest):
             "Be direct but helpful. Point out what's not working and give actionable advice to improve."
         )
         
-        prompt = f"Roast/audit this social media profile: {request.profile_details}. "
-                f"Be honest and funny but constructive. Point out: "
-                f"1) What's not working (bio, content strategy, engagement tactics) "
-                f"2) Specific improvements they should make "
-                f"3) What they're doing right (if anything). "
-                f"Keep it under 500 words, make it entertaining but valuable."
+        prompt = (f"Roast/audit this social media profile: {request.profile_details}. "
+                 f"Be honest and funny but constructive. Point out: "
+                 f"1) What's not working (bio, content strategy, engagement tactics) "
+                 f"2) Specific improvements they should make "
+                 f"3) What they're doing right (if anything). "
+                 f"Keep it under 500 words, make it entertaining but valuable.")
         
         response = await chat.send_message(UserMessage(text=prompt))
         roast = response.strip()
