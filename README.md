@@ -42,6 +42,7 @@ templates/
   project-agent-pointer.md
   shared-cook/
   india-product-crowdfunding/
+  flatmate-match/
 ```
 
 The skill is intentionally stack-agnostic: it chooses technologies based on the product, current codebase, existing services, constraints and cost.
@@ -59,3 +60,9 @@ The skill is intentionally stack-agnostic: it chooses technologies based on the 
 - [Claude Code](templates/india-product-crowdfunding/CLAUDE.md)
 - [Codex](templates/india-product-crowdfunding/CODEX.md)
 - Product specification: [Jira SCRUM-8](https://sagarsuthar530.atlassian.net/browse/SCRUM-8)
+
+### FlatmateMatch (provisional codename)
+- [AGENTS.md](templates/flatmate-match/AGENTS.md)
+- [Claude Code](templates/flatmate-match/CLAUDE.md)
+- [Codex](templates/flatmate-match/CODEX.md)
+- Product specification: [Jira SCRUM-9](https://sagarsuthar530.atlassian.net/browse/SCRUM-9)
