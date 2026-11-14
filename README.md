@@ -40,14 +40,22 @@ adapters/
   codex/
 templates/
   project-agent-pointer.md
+  shared-cook/
+  india-product-crowdfunding/
 ```
 
 The skill is intentionally stack-agnostic: it chooses technologies based on the product, current codebase, existing services, constraints and cost.
 
-
 ## Project pointers
 
-- [SharedCook project pointer for Codex/agents](templates/shared-cook/AGENTS.md)
-- [SharedCook Claude Code pointer](templates/shared-cook/CLAUDE.md)
-- [SharedCook Codex pointer](templates/shared-cook/CODEX.md)
+### SharedCook
+- [AGENTS.md](templates/shared-cook/AGENTS.md)
+- [Claude Code](templates/shared-cook/CLAUDE.md)
+- [Codex](templates/shared-cook/CODEX.md)
 - Product specification: [Jira SCRUM-7](https://sagarsuthar530.atlassian.net/browse/SCRUM-7)
+
+### India Product Crowdfunding (provisional codename)
+- [AGENTS.md](templates/india-product-crowdfunding/AGENTS.md)
+- [Claude Code](templates/india-product-crowdfunding/CLAUDE.md)
+- [Codex](templates/india-product-crowdfunding/CODEX.md)
+- Product specification: [Jira SCRUM-8](https://sagarsuthar530.atlassian.net/browse/SCRUM-8)
