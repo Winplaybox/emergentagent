@@ -43,3 +43,11 @@ templates/
 ```
 
 The skill is intentionally stack-agnostic: it chooses technologies based on the product, current codebase, existing services, constraints and cost.
+
+
+## Project pointers
+
+- [SharedCook project pointer for Codex/agents](templates/shared-cook/AGENTS.md)
+- [SharedCook Claude Code pointer](templates/shared-cook/CLAUDE.md)
+- [SharedCook Codex pointer](templates/shared-cook/CODEX.md)
+- Product specification: [Jira SCRUM-7](https://sagarsuthar530.atlassian.net/browse/SCRUM-7)
